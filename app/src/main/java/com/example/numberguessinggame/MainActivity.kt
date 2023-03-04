@@ -64,7 +64,9 @@ fun NumberGuessingGameScreen(){
 }
 
 @Composable
-fun
+fun generateNum(){
+    if 
+}
 
 
 @Composable
