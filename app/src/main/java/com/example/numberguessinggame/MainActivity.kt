@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -17,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.numberguessinggame.ui.theme.NumberGuessingGameTheme
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
@@ -35,44 +37,48 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
+var randNum: Int = (1..1000).random()
 @Composable
 fun NumberGuessingGameScreen(){
     var numGuess by remember { mutableStateOf("")}
     val Guess = numGuess.toIntOrNull() ?: 0
-    val output = randomGuess(Guess)
+    val output = randomGuess(Guess, randNum)
+
     Column (
         modifier = Modifier.padding(32.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
         Text(text = stringResource(R.string.title_game),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Spacer(Modifier.height(194.dp))
         EnterNumber(value = numGuess, onValueChange = { numGuess = it})
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(160.dp))
+        Button(onClick = { randNum = (1..1000).random() }) {
+            Text(text = stringResource(R.string.try_again), fontSize = 10.sp)
+        }
+        Spacer(Modifier.height(10.dp))
         Text(text = stringResource(R.string.guess_output, output),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            color = colorResource(R.color.grey)
         )
+
+
     }
 }
 
-@Composable
-fun generateNum(){
-    if 
-}
+
 
 
 @Composable
 fun EnterNumber(
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
 ){
     TextField(
         value = value,
@@ -81,13 +87,15 @@ fun EnterNumber(
         modifier = Modifier.fillMaxWidth( ),
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-
+        colors = TextFieldDefaults.textFieldColors(
+            backgroundColor = colorResource(R.color.white)
+        )
         )
 }
 
-val randNum: Int = (1..10).random()
 private fun randomGuess(
     Guess: Int,
+    randNum: Int
 ):String {
     var result: String = ""
     if (Guess < randNum){
@@ -95,7 +103,7 @@ private fun randomGuess(
     }else if (Guess > randNum){
         result = " higher!"
     }else{
-        result = " correct! %s"
+        result = " correct!"
     }
     return result
 }
